@@ -13,8 +13,8 @@ class DecisionTree:
         data = pd.read_excel(train_file)
         data2 = pd.read_excel(test_file)
 
-        del data['Unnamed: 0']
-        del data2['Unnamed: 0']
+        #del data['Unnamed: 0']
+        #del data2['Unnamed: 0']
 
         idx = np.random.permutation(len(data))
         data = data.iloc[idx]

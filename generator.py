@@ -14,7 +14,7 @@ class Generator:
         for key in global_parameters:
             for i in range(0, global_parameters[key].get_num_items()):
                 row_feature_list = []
-                row_feature_list.append(Feature('age', Generator.rand_age(key), 80, 0))
+                row_feature_list.append(Feature('age', Generator.rand_age(key), 85, 0))
                 gender = Feature('gender', random.randint(0, 1), 1, 0)
                 row_feature_list.append(gender)
 
@@ -28,7 +28,7 @@ class Generator:
                                 if 'Point' in feature.get_name():
                                     feature.set_value(random.randint(100,feature.get_max_random()))
                                 else:
-                                    feature.set_value(1)
+                                    feature.set_value(random.randint(1,feature.get_max_random()))
                                 # corresponding_feature = next(f for f in structure_features_dict[key].get_discriminant() if 'Weekly ' + feature.get_name() in f.get_name())
                                 for f in structure_features_dict[key].get_discriminant():
                                     weekly_flag = 0
@@ -55,7 +55,7 @@ class Generator:
                 for feature in structure_features_dict[key].get_other():
                     if 'weekly' not in feature.get_name().lower():
                         #if key != 'Negative':
-                        prob = (100 - global_parameters[key].get_positive()) / 2
+                        prob = 50#(100 - global_parameters[key].get_positive()) * 2
                         #else:
                             #prob = (100 - global_parameters[key].get_positive()) / 9
                         if random.randint(0, 100) < prob:
@@ -65,14 +65,14 @@ class Generator:
                                 if 'Point' in feature.get_name():
                                     feature.set_value(random.randint(100, 350))
                                 else:
-                                    feature.set_value(1)
+                                    feature.set_value(random.randint(1,feature.get_max_random()))
                                 # corresponding_feature = next(f for f in structure_features_dict[key].get_discriminant() if 'Weekly ' + feature.get_name() in f.get_name())
                                 for f in structure_features_dict[key].get_other():
                                     weekly_flag = 0
                                     if feature.get_name().lower() in f.get_name().lower() and 'weekly' in f.get_name().lower():
                                         corresponding_feature = f
                                         weekly_flag = 1
-                                        corresponding_feature.set_value(random.randint(1,corresponding_feature.get_max_random()))
+                                        corresponding_feature.set_value(random.randint(1,int(corresponding_feature.get_max_random())))
                                         break
                         else:
                             if 'Point' in feature.get_name():
@@ -101,6 +101,15 @@ class Generator:
                 for obj in row_feature_list:
                     row_feature_dict[obj.get_name()] = obj.get_value()
                 #df = df.append(row_feature_dict, ignore_index=True)
+                #correzione diarrea-costipazione
+                if row_feature_dict['diarrhea'] == 1 and row_feature_dict['constipation'] == 1:
+                    if random.randrange(2) == 0:
+                        row_feature_dict['diarrhea']=0
+                        row_feature_dict['Weekly Frequency - diarrhea'] = 0
+                    else:
+                        row_feature_dict['constipation'] = 0
+                        row_feature_dict['Weekly Frequency - constipation'] = 0
+
                 df.loc[len(df)] = row_feature_dict
 
         return df

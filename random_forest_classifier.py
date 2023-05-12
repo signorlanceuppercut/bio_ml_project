@@ -12,8 +12,8 @@ class RandomForest:
         train_data = pd.read_excel(train_file)
         test_data = pd.read_excel(test_file)
 
-        del train_data['Unnamed: 0']
-        del test_data['Unnamed: 0']
+        #del train_data['Unnamed: 0']
+        #del test_data['Unnamed: 0']
 
         idx = np.random.permutation(len(train_data))
         train_data = train_data.iloc[idx]
