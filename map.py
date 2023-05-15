@@ -96,8 +96,8 @@ class Map:
                             concept.set_value(source_values['Weekly Frequency - ' + adj_concept_name] /7)
                 else:
                     concept.set_value(source_values[concept.get_name().replace('_intensity','')]/5)
-        alpha=0.5
-        beta=0.5
+        alpha=0.6
+        beta=0.4
         #step 3: imposto i valori nei livelli successivi
         for key in list(self.concept_dict.keys())[1:]:
             for concept in self.concept_dict[key]:

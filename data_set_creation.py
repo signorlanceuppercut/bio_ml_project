@@ -42,11 +42,19 @@ class DatasetCreation:
 
         data = pd.read_excel("resources//dataset//our_data_set_train_NODMA.xlsx")
         df_fuzzy = DatasetCreation.fuzzy_dataframe(data, my_map)
-        df_fuzzy.to_excel('resources//dataset//our_fuzzy_data_set_train_NODMA.xlsx', index=False)
+        data.reset_index(inplace=True)
+        df_fuzzy.reset_index(inplace=True)
+        df_fuzzy_merged = pd.merge(df_fuzzy, data[['index', 'class label']], on='index', how='left')
+        df_fuzzy_merged = df_fuzzy_merged.drop('index', axis=1)
+        df_fuzzy_merged.to_excel('resources//dataset//our_fuzzy_data_set_train_NODMA.xlsx', index=False)
 
         data = pd.read_excel("resources//dataset//our_data_set_test_NODMA.xlsx")
         df_fuzzy = DatasetCreation.fuzzy_dataframe(data, my_map)
-        df_fuzzy.to_excel('resources//dataset//our_fuzzy_data_set_test_NODMA.xlsx', index=False)
+        data.reset_index(inplace=True)
+        df_fuzzy.reset_index(inplace=True)
+        df_fuzzy_merged = pd.merge(df_fuzzy, data[['index', 'class label']], on='index', how='left')
+        df_fuzzy_merged = df_fuzzy_merged.drop('index', axis=1)
+        df_fuzzy_merged.to_excel('resources//dataset//our_fuzzy_data_set_test_NODMA.xlsx', index=False)
 
     @staticmethod
     def fuzzy_dataframe(data, map):

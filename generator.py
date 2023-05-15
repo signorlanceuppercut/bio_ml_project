@@ -58,7 +58,7 @@ class Generator:
                 for feature in structure_features_dict[key].get_other():
                     if 'weekly' not in feature.get_name().lower():
                         #if key != 'Negative':
-                        prob = 50#(100 - global_parameters[key].get_positive()) * 2
+                        prob = 10#(100 - global_parameters[key].get_positive()) * 2
                         #else:
                             #prob = (100 - global_parameters[key].get_positive()) / 9
                         if random.randint(0, 100) < prob:
@@ -68,14 +68,20 @@ class Generator:
                                 if 'Point' in feature.get_name():
                                     feature.set_value(random.randint(100, 350))
                                 else:
-                                    feature.set_value(random.randint(1,feature.get_max_random()))
+                                    max_rand = feature.get_max_random()
+                                    if feature.get_max_random() - 3 > 1:
+                                        max_rand= feature.get_max_random() - 3
+                                    feature.set_value(random.randint(1, max_rand))
                                 # corresponding_feature = next(f for f in structure_features_dict[key].get_discriminant() if 'Weekly ' + feature.get_name() in f.get_name())
                                 for f in structure_features_dict[key].get_other():
                                     weekly_flag = 0
                                     if feature.get_name().lower() in f.get_name().lower() and 'weekly' in f.get_name().lower():
                                         corresponding_feature = f
                                         weekly_flag = 1
-                                        corresponding_feature.set_value(random.randint(1,int(corresponding_feature.get_max_random())))
+                                        max_rand = corresponding_feature.get_max_random()
+                                        if corresponding_feature.get_max_random() - 3 > 1:
+                                            max_rand = corresponding_feature.get_max_random() - 3
+                                        corresponding_feature.set_value(random.randint(1,int(max_rand)))
                                         break
                         else:
                             if 'Point' in feature.get_name():
