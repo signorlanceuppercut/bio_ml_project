@@ -28,14 +28,17 @@ class Generator:
                                 if 'Point' in feature.get_name():
                                     feature.set_value(random.randint(100,feature.get_max_random()))
                                 else:
-                                    feature.set_value(random.randint(1,feature.get_max_random()))
+                                    min_rand = 1
+                                    if feature.get_max_random() - 2 > 0:
+                                        min_rand = feature.get_max_random() - 2
+                                    feature.set_value(random.randint(min_rand,feature.get_max_random()))
                                 # corresponding_feature = next(f for f in structure_features_dict[key].get_discriminant() if 'Weekly ' + feature.get_name() in f.get_name())
                                 for f in structure_features_dict[key].get_discriminant():
                                     weekly_flag = 0
                                     if feature.get_name().lower() in f.get_name().lower() and 'weekly' in f.get_name().lower():
                                         corresponding_feature = f
                                         weekly_flag = 1
-                                        corresponding_feature.set_value(random.randint(1, corresponding_feature.get_max_random()))
+                                        corresponding_feature.set_value(random.randint(3, corresponding_feature.get_max_random()))
                                         break
                         else:
                             if 'Point' in feature.get_name():

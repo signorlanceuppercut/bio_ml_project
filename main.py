@@ -26,7 +26,7 @@ def main():
             report, confusion_matrix, accuracy, balanced_accuracy, f1 = DecisionTree.use_decision_tree("resources//dataset//our_data_set_train_NODMA.xlsx", "resources//dataset//our_data_set_test_NODMA.xlsx",ask_for_feature_reduction())
             print_results(report, confusion_matrix, accuracy, balanced_accuracy, f1)
         elif scelta == 6:
-            report, confusion_matrix, accuracy, balanced_accuracy, f1 = RandomForest.use_random_forest("resources//dataset//our_data_set_train_NODMA.xlsx", "resources//dataset//our_data_set_test_NODMA.xlsx",ask_for_feature_reduction())
+            report, confusion_matrix, accuracy, balanced_accuracy, f1 = RandomForest.use_random_forest("resources//dataset//our_fuzzy_data_set_train_NODMA.xlsx", "resources//dataset//our_fuzzy_data_set_test_NODMA.xlsx",ask_for_feature_reduction())
             print_results(report, confusion_matrix, accuracy, balanced_accuracy, f1)
         elif scelta == 0:
             print("Programma terminato.")

@@ -58,6 +58,7 @@ class Map:
                         concept.set_edge_list(list_of_edge)
                         concept.set_value(-1)
                         break
+        #self.print_map()
 
     def compute_map_values(self, source_values):
         #print (source_values)
@@ -70,7 +71,7 @@ class Map:
         for concept in self.concept_dict[0]:
             #for value in source_values:
             if concept.get_name() == 'age':
-                concept.set_value(source_values[concept.get_name()]/100)
+                concept.set_value(source_values[concept.get_name()]/85)
             elif concept.get_name() == 'gender_m':
                 if source_values['gender'] == 0:
                     concept.set_value(1)
@@ -82,19 +83,21 @@ class Map:
                 else:
                     concept.set_value(1)
             else:
-                if 'Weekly Frequency - ' + concept.get_name() in source_values:
-                    if concept.get_name() == 'smoke':
-                        concept.set_value(source_values['Weekly Frequency - ' + concept.get_name()]/140)
-                    elif concept.get_name() == 'coffee/tea':
-                        concept.set_value(source_values['Weekly Frequency - ' + concept.get_name()] / 30)
-                    elif concept.get_name() == 'Alcohol intake':
-                        concept.set_value(source_values['Weekly Frequency - ' + concept.get_name()] / 35)
-                    else:
-                        concept.set_value(source_values['Weekly Frequency - ' + concept.get_name()] /7)
+                if 'frequency' in concept.get_name():
+                    adj_concept_name = concept.get_name().replace('_frequency','')
+                    if 'Weekly Frequency - ' + adj_concept_name in source_values:
+                        if adj_concept_name == 'smoke':
+                            concept.set_value(source_values['Weekly Frequency - ' + adj_concept_name]/140)
+                        elif adj_concept_name == 'coffee/tea':
+                            concept.set_value(source_values['Weekly Frequency - ' + adj_concept_name] / 30)
+                        elif adj_concept_name == 'Alcohol intake':
+                            concept.set_value(source_values['Weekly Frequency - ' + adj_concept_name] / 35)
+                        else:
+                            concept.set_value(source_values['Weekly Frequency - ' + adj_concept_name] /7)
                 else:
-                    concept.set_value(source_values[concept.get_name()])
-        alpha=0.7
-        beta=0.3
+                    concept.set_value(source_values[concept.get_name().replace('_intensity','')]/5)
+        alpha=0.5
+        beta=0.5
         #step 3: imposto i valori nei livelli successivi
         for key in list(self.concept_dict.keys())[1:]:
             for concept in self.concept_dict[key]:
@@ -107,8 +110,22 @@ class Map:
                     if self.__search_value_node(edge_node.get_child()) > 0:
                         active_children = active_children + 1
                 for edge_node in concept.get_edge_list():
-                    value = value + alpha*self.__search_value_node(edge_node.get_child())*(edge_node.get_value()/edges_sum) + beta*(active_children)
+                    value = value + self.__search_value_node(edge_node.get_child())*(edge_node.get_value()/edges_sum)
                 concept.set_value(value)
+
+        #step 4: applico correzione
+        correction_dict = {}
+        correction_winner = {}
+        max = -1
+        concept_name_max = ''
+        for key in list(self.concept_dict.keys())[4:]:
+            for concept in self.concept_dict[key]:
+                concept.set_value(alpha * concept.get_value() + beta * (self.__count_reachable_nodes(concept,1)/self.__count_reachable_nodes(concept,0)))
+        '''for key in correction_dict.keys():
+            if max < correction_dict[key]:
+                max=correction_dict[key]
+                concept_name_max = '''
+
 
 
     def __search_value_node(self, node_id):
@@ -120,7 +137,30 @@ class Map:
                     break
         return value
 
+    def __search_node(self, node_id):
 
+        for key in list(self.concept_dict.keys()):
+            for concept in self.concept_dict[key]:
+                if concept.get_id() == node_id:
+                    my_node = concept
+                    break
+        return my_node
+
+    def __count_reachable_nodes(self, start_node, is_value_cheked):
+        visited_nodes = []
+
+        def visit_node(node):
+            if is_value_cheked == 1:
+                if node.get_value() != 0:
+                    visited_nodes.append(node)
+            else:
+                visited_nodes.append(node)
+            if node.get_edge_list() is not None:
+                for edge in node.get_edge_list():
+                    visit_node(self.__search_node(edge.get_child()))
+
+        visit_node(start_node)
+        return len(visited_nodes)
 
 
 
