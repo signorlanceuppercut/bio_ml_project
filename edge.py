@@ -1,9 +1,10 @@
 class Edge:
 
-    def __init__(self, parent_node, child_node, value):
+    def __init__(self, parent_node, child_node, value, id):
         self.parent_node = parent_node
         self.child_node = child_node
         self.value = value
+        self.id = id
 
     def get_parent(self):
         return self.parent_node
@@ -23,3 +24,8 @@ class Edge:
     def set_value(self, value):
         self.value = value
 
+    def get_id(self):
+        return self.id
+
+    def set_id(self, id):
+        self.id = id

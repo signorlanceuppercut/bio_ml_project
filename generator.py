@@ -29,8 +29,8 @@ class Generator:
                                     feature.set_value(random.randint(100,feature.get_max_random()))
                                 else:
                                     min_rand = 1
-                                    if feature.get_max_random() - 2 > 0:
-                                        min_rand = feature.get_max_random() - 2
+                                    if feature.get_max_random()/2 + 1 > 0:
+                                        min_rand = int(feature.get_max_random()/2 + 1)
                                     feature.set_value(random.randint(min_rand,feature.get_max_random()))
                                 # corresponding_feature = next(f for f in structure_features_dict[key].get_discriminant() if 'Weekly ' + feature.get_name() in f.get_name())
                                 for f in structure_features_dict[key].get_discriminant():
@@ -38,7 +38,10 @@ class Generator:
                                     if feature.get_name().lower() in f.get_name().lower() and 'weekly' in f.get_name().lower():
                                         corresponding_feature = f
                                         weekly_flag = 1
-                                        corresponding_feature.set_value(random.randint(3, corresponding_feature.get_max_random()))
+                                        min_rand = 1
+                                        if corresponding_feature.get_max_random()/2 +1 > 0:
+                                            min_rand = int(corresponding_feature.get_max_random()/2 +1)
+                                        corresponding_feature.set_value(random.randint(min_rand, corresponding_feature.get_max_random()))
                                         break
                         else:
                             if 'Point' in feature.get_name():
@@ -58,7 +61,7 @@ class Generator:
                 for feature in structure_features_dict[key].get_other():
                     if 'weekly' not in feature.get_name().lower():
                         #if key != 'Negative':
-                        prob = 10#(100 - global_parameters[key].get_positive()) * 2
+                        prob = 45#(100 - global_parameters[key].get_positive()) * 2
                         #else:
                             #prob = (100 - global_parameters[key].get_positive()) / 9
                         if random.randint(0, 100) < prob:
@@ -69,8 +72,8 @@ class Generator:
                                     feature.set_value(random.randint(100, 350))
                                 else:
                                     max_rand = feature.get_max_random()
-                                    if feature.get_max_random() - 3 > 1:
-                                        max_rand= feature.get_max_random() - 3
+                                    #if feature.get_max_random() - 3 > 1:
+                                        #max_rand= feature.get_max_random() - 3
                                     feature.set_value(random.randint(1, max_rand))
                                 # corresponding_feature = next(f for f in structure_features_dict[key].get_discriminant() if 'Weekly ' + feature.get_name() in f.get_name())
                                 for f in structure_features_dict[key].get_other():
@@ -79,8 +82,8 @@ class Generator:
                                         corresponding_feature = f
                                         weekly_flag = 1
                                         max_rand = corresponding_feature.get_max_random()
-                                        if corresponding_feature.get_max_random() - 3 > 1:
-                                            max_rand = corresponding_feature.get_max_random() - 3
+                                        if corresponding_feature.get_max_random() - corresponding_feature.get_max_random()/10> 0:
+                                            max_rand = int(corresponding_feature.get_max_random() - corresponding_feature.get_max_random()/10)
                                         corresponding_feature.set_value(random.randint(1,int(max_rand)))
                                         break
                         else:
@@ -111,7 +114,7 @@ class Generator:
                     row_feature_dict[obj.get_name()] = obj.get_value()
                 #df = df.append(row_feature_dict, ignore_index=True)
                 #correzione diarrea-costipazione
-                if row_feature_dict['diarrhea'] == 1 and row_feature_dict['constipation'] == 1:
+                if row_feature_dict['diarrhea'] in [1,2,3,4,5] and row_feature_dict['constipation'] in [1,2,3,4,5]:
                     if random.randrange(2) == 0:
                         row_feature_dict['diarrhea']=0
                         row_feature_dict['Weekly Frequency - diarrhea'] = 0

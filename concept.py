@@ -2,17 +2,19 @@ from edge import Edge
 
 class Concept:
 
-    def __init__(self, id, name, edge_list, value):
+    def __init__(self, id, name, edge_list, value, level):
         self.id = id
         self.name = name
         self.edge_list = edge_list
         self.value = value
+        self.level = level
 
     def get_id(self):
         return self.id
 
     def set_id(self,id):
         self.id = id
+
     def get_name(self):
         return self.name
 
@@ -30,3 +32,9 @@ class Concept:
 
     def set_value(self,value):
         self.value = value
+
+    def get_level(self):
+        return self.level
+
+    def set_level(self,level):
+        self.level = level
