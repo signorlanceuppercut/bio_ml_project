@@ -5,6 +5,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, balanced_accuracy_score
 from feature_reduction import FeatureReduction
+from sklearn.metrics import cohen_kappa_score
+from sklearn.metrics import mean_squared_error
 
 class BayesianNetworkClassifier:
     @staticmethod
@@ -44,4 +46,4 @@ class BayesianNetworkClassifier:
         y_pred = nb_classifier.predict(X_test)
         accuracy = accuracy_score(y_test_definitivo, y_pred)
 
-        return classification_report(y_test_definitivo, y_pred), confusion_matrix(y_test_definitivo,y_pred), accuracy_score(y_test_definitivo, y_pred), balanced_accuracy_score(y_test_definitivo, y_pred), f1_score(y_test_definitivo,y_pred,average='weighted')
+        return classification_report(y_test_definitivo, y_pred), confusion_matrix(y_test_definitivo,y_pred), accuracy_score(y_test_definitivo, y_pred), balanced_accuracy_score(y_test_definitivo, y_pred), f1_score(y_test_definitivo,y_pred,average='weighted'), cohen_kappa_score(y_test_definitivo, y_pred), mean_squared_error(y_test_definitivo, y_pred, squared=False)

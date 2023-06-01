@@ -4,6 +4,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, f1_score, balanced_accuracy_score
 from sklearn.model_selection import RandomizedSearchCV
 from feature_reduction import FeatureReduction
+from sklearn.metrics import cohen_kappa_score
+from sklearn.metrics import mean_squared_error
 
 class RandomForest:
     @staticmethod
@@ -66,4 +68,4 @@ class RandomForest:
         # fai previsioni sul set di test
         y_pred = rfc_random.predict(X_test)
 
-        return classification_report(y_test, y_pred), confusion_matrix(y_test,y_pred), accuracy_score(y_test, y_pred), balanced_accuracy_score(y_test, y_pred), f1_score(y_test,y_pred,average='weighted')
+        return classification_report(y_test, y_pred), confusion_matrix(y_test,y_pred), accuracy_score(y_test, y_pred), balanced_accuracy_score(y_test, y_pred), f1_score(y_test,y_pred,average='weighted'), cohen_kappa_score(y_test, y_pred), mean_squared_error(y_test, y_pred, squared=False)

@@ -6,6 +6,8 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from feature_reduction import FeatureReduction
+from sklearn.metrics import cohen_kappa_score
+from sklearn.metrics import mean_squared_error
 
 
 class KNN:
@@ -53,4 +55,4 @@ class KNN:
         # Valuta il modello sul set di test
         y_pred = knn_best.predict(X_test_definitivo)
 
-        return classification_report(y_test_definitivo, y_pred), confusion_matrix(y_test_definitivo, y_pred),  accuracy_score(y_test_definitivo, y_pred), balanced_accuracy_score(y_test_definitivo, y_pred), f1_score(y_test_definitivo, y_pred, average='weighted')
+        return classification_report(y_test_definitivo, y_pred), confusion_matrix(y_test_definitivo, y_pred),  accuracy_score(y_test_definitivo, y_pred), balanced_accuracy_score(y_test_definitivo, y_pred), f1_score(y_test_definitivo, y_pred, average='weighted'), cohen_kappa_score(y_test_definitivo, y_pred), mean_squared_error(y_test_definitivo, y_pred, squared=False)

@@ -10,6 +10,8 @@ from tensorflow.keras.callbacks import EarlyStopping
 from feature_reduction import FeatureReduction
 import random
 import tensorflow as tf
+from sklearn.metrics import cohen_kappa_score
+from sklearn.metrics import mean_squared_error
 
 class DeepLearning:
     @staticmethod
@@ -72,4 +74,4 @@ class DeepLearning:
         y_pred = np.argmax(model.predict(X_test), axis=-1)
         accuracy = accuracy_score(y_test_definitivo, y_pred)
 
-        return classification_report(y_test_definitivo, y_pred), confusion_matrix(y_test_definitivo,y_pred), accuracy_score(y_test_definitivo, y_pred), balanced_accuracy_score(y_test_definitivo, y_pred), f1_score(y_test_definitivo,y_pred,average='weighted')
+        return classification_report(y_test_definitivo, y_pred), confusion_matrix(y_test_definitivo,y_pred), accuracy_score(y_test_definitivo, y_pred), balanced_accuracy_score(y_test_definitivo, y_pred), f1_score(y_test_definitivo,y_pred,average='weighted'), cohen_kappa_score(y_test_definitivo, y_pred), mean_squared_error(y_test_definitivo, y_pred, squared=False)
