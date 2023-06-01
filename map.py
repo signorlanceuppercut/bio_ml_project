@@ -1,6 +1,8 @@
 from concept import Concept
 from edge import Edge
 import pandas as pd
+import numpy as np
+import math
 
 class Map:
     concept_dict={}
@@ -32,7 +34,7 @@ class Map:
             # print(result_df.head())
             i=0
             for concept_name in result_df.iloc[:, 1]:
-                concept_list.append(Concept(result_df.iat[i, 0],concept_name, None, -1, result_df.iat[i, 2]))
+                concept_list.append(Concept(result_df.iat[i, 0],concept_name, None, 0, result_df.iat[i, 2]))
                 i = i+1
             self.concept_dict[key] = concept_list
 
@@ -56,7 +58,7 @@ class Map:
                             list_of_edge.append(Edge(idx, child_concept,weight_dict[row['weight'][j]],row['id'][j]))
                             j=j+1
                         concept.set_edge_list(list_of_edge)
-                        concept.set_value(-1)
+                        concept.set_value(0)
                         break
         #self.print_map()
 
@@ -65,7 +67,7 @@ class Map:
         #step 1:mi assicuro di che i valori di inizializzazione siano a -1
         for key in list(self.concept_dict.keys()):
             for concept in self.concept_dict[key]:
-                concept.set_value(-1)
+                concept.set_value(0)
 
         #step 2: imposto i valori delle foglie
         for concept in self.concept_dict[0]:
@@ -102,7 +104,7 @@ class Map:
                             else:
                                 concept.set_value(0)
                         else:
-                            if source_values['Weekly Frequency - ' + adj_concept_name] /7 > 0.4:
+                            if source_values['Weekly Frequency - ' + adj_concept_name] /7 > 0:
                                 concept.set_value(source_values['Weekly Frequency - ' + adj_concept_name] /7)
                             else:
                                 concept.set_value(0)
@@ -111,9 +113,6 @@ class Map:
                         concept.set_value(source_values[concept.get_name().replace('_intensity','')]/5)
                     else:
                         concept.set_value(0)
-        alpha=0.4
-        beta=0.3
-        gamma=0.3
 
         #step 3: imposto i valori nei livelli successivi
         for key in list(self.concept_dict.keys())[1:]:
@@ -139,25 +138,56 @@ class Map:
                     #else:
                     concept.set_value(value)
 
-        #step 4: applico correzione
-        max = -1
+        #step 4: calcolo valori altri nodi
+        for concept in self.concept_dict[max(list(self.concept_dict.keys()))]:
+            if 'max' not in concept.get_name() and 'count' not in concept.get_name() and 'min' not in concept.get_name():
+                # if concept.get_name() == concept_name_max:
+                node_max = self.__search_node_by_name(concept.get_name() + ' max')
+                max_value = self.__search_max(concept)
+                node_max.set_value(max_value)
+
+        for concept in self.concept_dict[max(list(self.concept_dict.keys()))]:
+            if 'max' not in concept.get_name() and 'count' not in concept.get_name() and 'min' not in concept.get_name():
+                # if concept.get_name() == concept_name_max:
+                node_min = self.__search_node_by_name(concept.get_name() + ' min')
+                min_value = self.__search_min(concept)
+                node_min.set_value(min_value)
+
+        for concept in self.concept_dict[max(list(self.concept_dict.keys()))]:
+            if 'max' not in concept.get_name() and 'count' not in concept.get_name() and 'min' not in concept.get_name():
+                reachable_count = (self.__count_reachable_nodes(concept, 1) / self.__count_reachable_nodes(concept, 0))
+                node_count = self.__search_node_by_name(concept.get_name() + ' count')
+                node_count.set_value(reachable_count)
+
+        '''maxi = -1
         concept_name_max = ''
-        for key in list(self.concept_dict.keys())[3:]:
-            for concept in self.concept_dict[key]:
-                if max < concept.get_value():
-                    max = concept.get_value()
+        list_of_max = []
+        for concept in self.concept_dict[max(list(self.concept_dict.keys()))]:
+            if 'max' not in concept.get_name() and 'count' not in concept.get_name():
+                if maxi < concept.get_value():
+                    maxi = concept.get_value()
                     concept_name_max = concept.get_name()
-            for concept in self.concept_dict[key]:
-
-                if 'count' not in concept.get_name() and 'max' not in concept.get_name():
-                    #if concept.get_name() == concept_name_max:
-                    concept.set_value(alpha * concept.get_value() + beta * (self.__count_reachable_nodes(concept, 1) / self.__count_reachable_nodes(concept,0)) + gamma * self.__search_max(concept))
-
-                    reacheble_not_zero = (self.__count_reachable_nodes(concept, 1) / self.__count_reachable_nodes(concept, 0))
-                    node_count = self.__search_node_by_name(concept.get_name() + ' count')
-                    node_count.set_value(reacheble_not_zero)
-                    node_count = self.__search_node_by_name(concept.get_name() + ' max')
-                    node_count.set_value(self.__search_max(concept))
+        '''
+        '''# correzione cardio
+        for concept in self.concept_dict[max(list(self.concept_dict.keys()))]:
+            if 'rischio cardiaco' == concept.get_name() and concept.get_value() == 0:
+                if (self.__search_value_node(94) > self.__search_value_node(95) or self.__search_value_node(96) > self.__search_value_node(95)) and (self.__search_value_node(94) > self.__search_value_node(49) or self.__search_value_node(96) > self.__search_value_node(49)):
+                    concept.set_value(1)
+                    #for concept2 in self.concept_dict[max(list(self.concept_dict.keys()))]:
+                        #if 'rischio cardiaco' != concept2.get_name():
+                            #concept2.set_value(0)
+        '''
+        alpha = 0.3
+        beta = 0.1
+        gamma = 0
+        delta = 0.6
+        # step 5 applico correzione valori radice
+        for concept in self.concept_dict[max(list(self.concept_dict.keys()))]:
+            if 'max' not in concept.get_name() and 'count' not in concept.get_name() and 'min' not in concept.get_name(): #and concept.get_name() == concept_name_max:
+                A = concept.get_value()
+                B = (self.__count_reachable_nodes(concept, 1) / self.__count_reachable_nodes(concept,0))
+                C = self.__search_max_graph(concept)
+                concept.set_value(alpha * concept.get_value() + beta * (self.__count_reachable_nodes(concept, 1) / self.__count_reachable_nodes(concept,0)) + gamma * (self.__search_max(concept)) + delta * (self.__search_max_graph(concept)))
 
     def __search_value_node(self, node_id):
         value = -1
@@ -186,23 +216,6 @@ class Map:
                     break
         return my_node
 
-    def __count_reachable_nodes(self, start_node, is_value_cheked):
-        visited_nodes = set()
-
-        def visit_node(node):
-            if is_value_cheked == 1:
-                if node.get_value() != 0:
-                    visited_nodes.add(node)
-            else:
-                visited_nodes.add(node)
-            if node.get_edge_list() is not None:
-                for edge in node.get_edge_list():
-                    if edge.get_id() not in range(68,73):
-                        visit_node(self.__search_node(edge.get_child()))
-
-        visit_node(start_node)
-        return len(visited_nodes)
-
     def __search_max(self, start_node):
         visited_nodes = set()
 
@@ -216,9 +229,66 @@ class Map:
                         visit_node(self.__search_node(edge.get_child()))
 
         visit_node(start_node)
-        max_value = -1
+        max_value = list(visited_nodes)[0].get_value()
         for node in visited_nodes:
             if max_value < node.get_value():
                 max_value = node.get_value()
 
         return max_value
+
+    def __search_max_graph(self, start_node):
+        visited_nodes = set()
+
+        def visit_node(node):
+            if node.get_level() == 1:
+                visited_nodes.add(node)
+
+            if node.get_edge_list() is not None:
+                for edge in node.get_edge_list():
+                    visit_node(self.__search_node(edge.get_child()))
+
+        visit_node(start_node)
+        max_value = list(visited_nodes)[0].get_value()
+        for node in visited_nodes:
+            if max_value < node.get_value():
+                max_value = node.get_value()
+
+        return max_value
+
+    def __search_min(self, start_node):
+        visited_nodes = set()
+
+        def visit_node(node):
+            if node.get_level() == 1:
+                visited_nodes.add(node)
+
+            if node.get_edge_list() is not None:
+                for edge in node.get_edge_list():
+                    if edge.get_id() not in range(68, 73):
+                        visit_node(self.__search_node(edge.get_child()))
+
+        visit_node(start_node)
+        min_value = 0.5
+        for node in visited_nodes:
+            if node.get_value() > 0.4:
+                if min_value > node.get_value():
+                    min_value = node.get_value()
+
+        return min_value
+
+    def __count_reachable_nodes(self, start_node, is_value_cheked):
+        visited_nodes = set()
+
+        def visit_node(node):
+            if is_value_cheked == 1:
+                if node.get_value() != 0:
+                    visited_nodes.add(node)
+            else:
+                visited_nodes.add(node)
+            if node.get_edge_list() is not None:
+                for edge in node.get_edge_list():
+                    if edge.get_id() not in range(68, 73):
+                        visit_node(self.__search_node(edge.get_child()))
+
+        visit_node(start_node)
+        return len(visited_nodes)

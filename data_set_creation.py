@@ -61,7 +61,7 @@ class DatasetCreation:
         initialization_df = 0
         for i in range(0,data.shape[0]):
             map.compute_map_values(data.iloc[i,:])
-            map.print_map()
+            #map.print_map()
             col_names = []
             row_feature_dict = {}
             for concept in map.get_concept_dict()[max(map.get_concept_dict().keys())]:

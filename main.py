@@ -4,6 +4,9 @@ from random_forest_classifier import RandomForest
 from SVM import SVM
 from decision_tree import DecisionTree
 from paths_configuration import PathsConfiguration
+from feature_importance import FeatureImportance
+from deep_learning import DeepLearning
+from bnc import BayesianNetworkClassifier
 
 def main():
     scelta = None
@@ -31,9 +34,17 @@ def main():
             report, confusion_matrix, accuracy, balanced_accuracy, f1 = RandomForest.use_random_forest(paths_configuration.get_train_path(), paths_configuration.get_test_path(),ask_for_feature_reduction())
             print_results(report, confusion_matrix, accuracy, balanced_accuracy, f1)
         elif scelta == 7:
-            paths_configuration = PathsConfiguration(1)
+            report, confusion_matrix, accuracy, balanced_accuracy, f1 = DeepLearning.use_DL(paths_configuration.get_train_path(), paths_configuration.get_test_path(),ask_for_feature_reduction())
+            print_results(report, confusion_matrix, accuracy, balanced_accuracy, f1)
         elif scelta == 8:
+            report, confusion_matrix, accuracy, balanced_accuracy, f1 = BayesianNetworkClassifier.use_BayesianNetworkClassifier(paths_configuration.get_train_path(), paths_configuration.get_test_path(), ask_for_feature_reduction())
+            print_results(report, confusion_matrix, accuracy, balanced_accuracy, f1)
+        elif scelta == 9:
+            paths_configuration = PathsConfiguration(1)
+        elif scelta == 10:
             paths_configuration = PathsConfiguration(0)
+        elif scelta == 11:
+            FeatureImportance.compute_importance(paths_configuration.get_train_path())
         elif scelta == 0:
             print("Programma terminato.")
         else:
@@ -47,8 +58,11 @@ def print_menu():
     print("4. Usa classificatore SVM")
     print("5. Usa classificarore DT")
     print("6. Usa classificatore RF")
-    print("7. Imposta i path di train e test per la fuzzy")
-    print("8. Reset i path di train e test")
+    print("7. Usa classificatore ANN")
+    print("8. Usa classificatore BNC")
+    print("9. Imposta i path di train e test per la fuzzy")
+    print("10. Reset i path di train e test")
+    print("11. Calcola importanza")
     print("0. Esci dal programma")
 
 def print_results(report, confusion_matrix, accuracy, balanced_accuracy, f1):

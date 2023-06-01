@@ -33,12 +33,13 @@ class RandomForest:
         # definisci i parametri da testare
         param_grid = {
             'n_estimators': [50, 100, 200, 500],
-            'max_depth': [10, 20, 30, None],
-            'min_samples_split': [2, 5, 10],
+            'max_depth': [5, 10, 15, 18],
+            'min_samples_split': [2, 5, 10, 18],
             'min_samples_leaf': [1, 2, 4],
-            'max_features': ['auto', 'sqrt', 'log2']
+            'max_features': ['sqrt', 'log2']
         }
-        '''param_grid = {
+        '''
+        param_grid = {
             'n_estimators': [50, 100, 200],
             'max_depth': [5, 10, 15],
             'min_samples_split': [2, 5],
@@ -57,7 +58,7 @@ class RandomForest:
 
         # esegui la ricerca casuale dei parametri
         rfc_random = RandomizedSearchCV(estimator=rfc, param_distributions=param_grid,
-                                        n_iter=100, cv=3, verbose=2, random_state=42, n_jobs=-1)
+                                        n_iter=200, cv=3, verbose=2, random_state=100, n_jobs=-1)
 
         # addestra il modello con i parametri ottimizzati
         rfc_random.fit(X_train, y_train)
